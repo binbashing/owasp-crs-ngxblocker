@@ -1,0 +1,17 @@
+FROM owasp/modsecurity-crs:nginx-alpine
+
+ADD https://raw.githubusercontent.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker/master/install-ngxblocker /usr/local/sbin/install-ngxblocker
+
+USER root
+
+RUN apk add --update bind-tools curl && \
+    cd /usr/local/sbin/ && \
+    chmod +x install-ngxblocker && \
+    ./install-ngxblocker -x && \
+    ./setup-ngxblocker -x -e conf -v /etc/nginx/conf.d/ && \
+    chown nginx:root /etc/nginx/conf.d/* && \
+    chown nginx:root /etc/nginx/bots.d/* && \
+    chmod 664 /etc/nginx/bots.d/* && \
+    chmod 664 /etc/nginx/conf.d/*
+
+USER nginx
