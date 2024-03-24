@@ -10,6 +10,16 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dockerfile: ['Dockerfile', 'Dockerfile-alpine']
+        tag: ['nginx', 'nginx-alpine']
+        include:
+          - dockerfile: 'Dockerfile'
+            tag: 'nginx'
+          - dockerfile: 'Dockerfile-alpine'
+            tag: 'nginx-alpine'
+            latest: true
 
     steps:
       - name: Checkout code
@@ -24,25 +34,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image (Nginx)
+      - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: Dockerfile
+          file: ${{ matrix.dockerfile }}
           push: true
           tags: |
-            binbashing/owasp-crs-ngxblocker:nginx
-            binbashing/owasp-crs-ngxblocker:${{ github.sha }}-nginx
-            binbashing/owasp-crs-ngxblocker:latest
-          platforms: linux/amd64,linux/arm64
-
-      - name: Build and push Docker image (Nginx Alpine)
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: Dockerfile-alpine
-          push: true
-          tags: |
-            binbashing/owasp-crs-ngxblocker:nginx-alpine
-            binbashing/owasp-crs-ngxblocker:${{ github.sha }}-nginx-alpine
+            binbashing/owasp-crs-ngxblocker:${{ matrix.tag }}
+            binbashing/owasp-crs-ngxblocker:${{ github.sha }}-${{ matrix.tag }}
+            ${{ matrix.latest && 'binbashing/owasp-crs-ngxblocker:latest' || '' }}
           platforms: linux/amd64,linux/arm64
