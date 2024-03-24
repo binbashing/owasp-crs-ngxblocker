@@ -1,25 +1,11 @@
-name: Build and Push Docker Images
-
-on:
-  push:
-    branches:
-      - main
-  schedule:
-    - cron: '0 0 * * *'
-
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dockerfile: ['Dockerfile', 'Dockerfile-alpine']
-        tag: ['nginx', 'nginx-alpine']
-        include:
-          - dockerfile: 'Dockerfile'
-            tag: 'nginx'
-          - dockerfile: 'Dockerfile-alpine'
-            tag: 'nginx-alpine'
-            latest: true
+        config:
+          - {dockerfile: 'Dockerfile', tag: 'nginx'}
+          - {dockerfile: 'Dockerfile-alpine', tag: 'nginx-alpine', latest: true}
 
     steps:
       - name: Checkout code
@@ -38,10 +24,10 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ${{ matrix.dockerfile }}
+          file: ${{ matrix.config.dockerfile }}
           push: true
           tags: |
-            binbashing/owasp-crs-ngxblocker:${{ matrix.tag }}
-            binbashing/owasp-crs-ngxblocker:${{ github.sha }}-${{ matrix.tag }}
-            ${{ matrix.latest && 'binbashing/owasp-crs-ngxblocker:latest' || '' }}
+            binbashing/owasp-crs-ngxblocker:${{ matrix.config.tag }}
+            binbashing/owasp-crs-ngxblocker:${{ github.sha }}-${{ matrix.config.tag }}
+            ${{ matrix.config.latest && 'binbashing/owasp-crs-ngxblocker:latest' || '' }}
           platforms: linux/amd64,linux/arm64
