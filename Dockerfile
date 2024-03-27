@@ -5,6 +5,7 @@ ADD https://raw.githubusercontent.com/mitchellkrogza/nginx-ultimate-bad-bot-bloc
 USER root
 
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y dnsutils wget && \
     cd /usr/local/sbin/ && \
     chmod 777 install-ngxblocker && \    

@@ -4,7 +4,9 @@ ADD https://raw.githubusercontent.com/mitchellkrogza/nginx-ultimate-bad-bot-bloc
 
 USER root
 
-RUN apk add --update bind-tools curl && \
+RUN apk update && \
+    apk upgrade && \
+    apk add bind-tools curl && \
     cd /usr/local/sbin/ && \
     chmod +x install-ngxblocker && \
     ./install-ngxblocker -x && \
