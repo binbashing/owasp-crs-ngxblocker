@@ -39,4 +39,4 @@ jobs:
             binbashing/owasp-crs-ngxblocker:${{ matrix.config.tag }}
             binbashing/owasp-crs-ngxblocker:${{ github.sha }}-${{ matrix.config.tag }}
             ${{ matrix.config.latest && 'binbashing/owasp-crs-ngxblocker:latest' || '' }}
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64, linux/arm64/v8, linux/arm/v7, linux/i386
