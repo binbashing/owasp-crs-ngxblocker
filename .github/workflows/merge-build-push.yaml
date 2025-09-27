@@ -47,11 +47,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: binbashing/owasp-crs-ngxblocker
+
   keepalive-job:
     name: Keepalive Workflow
     runs-on: ubuntu-latest
+    # Use Entepotenz's lightweight keepalive action (creates an empty commit
+    # when repo is close to inactive threshold). Requires repo write rights.
     permissions:
-      actions: write
+      contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: gautamkrishnar/keepalive-workflow@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Keep repo alive
+        uses: entepotenz/keep-github-actions-alive-min-dependencies@v1
+        with:
+          TIME_ELAPSED_THRESHOLD_IN_DAYS: '50'
