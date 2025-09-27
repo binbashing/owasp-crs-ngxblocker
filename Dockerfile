@@ -9,11 +9,11 @@ RUN apt-get update && \
     apt-get install -y dnsutils wget
 
 RUN cd /usr/local/sbin/ && \
-    chmod 777 install-ngxblocker && \    
-    ./install-ngxblocker -x && \
+    chmod 777 install-ngxblocker && \
+    env -u SSL_CERT_FILE -u SSL_CERT_KEY_FILE ./install-ngxblocker -x && \
     chmod 777 *-ngxblocker
 
-RUN setup-ngxblocker -x -e template -v /etc/nginx/templates/conf.d/ -c /etc/nginx/templates/conf.d -m /etc/nginx/templates/nginx.conf.template && \
+RUN env -u SSL_CERT_FILE -u SSL_CERT_KEY_FILE setup-ngxblocker -x -e template -v /etc/nginx/templates/conf.d/ -c /etc/nginx/templates/conf.d -m /etc/nginx/templates/nginx.conf.template && \
     chown nginx:nginx /etc/nginx/conf.d/* && \
     chown nginx:nginx /etc/nginx/bots.d/* && \
     chmod 664 /etc/nginx/bots.d/* && \
